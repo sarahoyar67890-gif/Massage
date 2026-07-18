@@ -14,13 +14,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap');
 
 :root{
-  --cover-1:#1b2436; --cover-2:#111726; --cover-edge:#2b3854;
-  --paper-1:#e7dcc0; --paper-2:#d9cba3; --paper-3:#cabb8e;
-  --ink:#242030; --ink-soft:#5a5346;
-  --brass-1:#efdfb0; --brass-2:#c9a969; --brass-3:#8a6a35;
-  --stamp-red:#9b4a38; --stamp-red-dark:#6f3226;
-  --harbor:#4c7c93; --harbor-dark:#345a6b;
-  --thread:#b8a76a;
+  --cover-1:#4c6b1f; --cover-2:#2e4313; --cover-edge:#7a9a3d;
+  --paper-1:#eef2d0; --paper-2:#d7e2a8; --paper-3:#b9cc79;
+  --ink:#26321a; --ink-soft:#526138;
+  --brass-1:#f0e9a0; --brass-2:#c9b23e; --brass-3:#8a7a1f;
+  --stamp-red:#b25a2e; --stamp-red-dark:#7e3d1c;
+  --harbor:#3f7a4a; --harbor-dark:#2c5735;
+  --thread:#9aa84a;
 
   --font-display:'Fraunces', serif;
   --font-mono:'Space Mono', monospace;
@@ -30,6 +30,11 @@
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:72px;
   --r-s:6px; --r-m:14px; --r-l:22px;
   --ease:cubic-bezier(.22,.9,.3,1.05);
+  --shadow-sm:0 4px 12px rgba(26,32,20,0.12);
+  --shadow-md:0 14px 34px rgba(26,32,20,0.18);
+  --shadow-lg:0 30px 70px rgba(15,20,10,0.4);
+  --glass-bg:rgba(238,242,208,0.55);
+  --glass-border:rgba(255,255,255,0.4);
   color-scheme: light;
 }
 *{ margin:0; padding:0; box-sizing:border-box; }
@@ -38,7 +43,7 @@ body{
   font-family:var(--font-body);
   color:var(--ink);
   background:
-    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(239,223,176,0.08), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(240,233,160,0.08), transparent 60%),
     linear-gradient(180deg, var(--cover-2), var(--cover-1) 40%, var(--cover-1) 100%);
   min-height:100vh; overflow-x:hidden; position:relative;
   -webkit-font-smoothing:antialiased;
@@ -65,7 +70,7 @@ h1,h2,.font-display{ font-family:var(--font-display); }
 .desk::before{
   content:''; position:absolute; inset:0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(239,223,176,0.05), transparent 65%),
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(240,233,160,0.05), transparent 65%),
     repeating-linear-gradient(115deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 5px);
 }
 .desk-vignette{ position:fixed; inset:0; z-index:2; pointer-events:none; background:radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(6,8,16,0.55) 100%); }
@@ -73,12 +78,78 @@ h1,h2,.font-display{ font-family:var(--font-display); }
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 #dust{ position:fixed; inset:0; z-index:1; pointer-events:all; cursor:crosshair; }
 #cursor-layer{ position:fixed; inset:0; pointer-events:none; z-index:9999; }
-.sparkle{ position:absolute; width:5px; height:5px; border-radius:50%; background:var(--brass-1); box-shadow:0 0 8px 2px rgba(239,223,176,0.7); animation:sparkleFade .8s ease-out forwards; }
+.sparkle{ position:absolute; width:5px; height:5px; border-radius:50%; background:var(--brass-1); box-shadow:0 0 8px 2px rgba(240,233,160,0.7); animation:sparkleFade .8s ease-out forwards; }
 @keyframes sparkleFade{ to{ transform:scale(0.2) translateY(10px); opacity:0; } }
 .wish-label{ position:fixed; z-index:40; color:var(--brass-1); font-family:var(--font-hand); font-size:1rem; pointer-events:none; animation:wishFloat 1.6s ease-out forwards; text-shadow:0 1px 6px rgba(0,0,0,0.5); }
 @keyframes wishFloat{ 0%{opacity:0;} 15%{opacity:1;} 100%{opacity:0; transform:translateY(-40px);} }
 .particles{ position:fixed; inset:0; z-index:4; pointer-events:none; }
 .particle{ position:absolute; will-change:transform,opacity; }
+
+/* ==========================================================================
+   PREMIUM LOADING SCREEN
+   ========================================================================== */
+#loadScreen{
+  position:fixed; inset:0; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+  background:linear-gradient(180deg, var(--cover-2), var(--cover-1) 55%, var(--cover-1) 100%);
+  transition:opacity .7s ease, visibility .7s ease;
+}
+#loadScreen.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.load-stamp{
+  width:88px; height:88px; border-radius:50%; border:3px solid var(--brass-2);
+  display:flex; align-items:center; justify-content:center; font-size:2.2rem;
+  box-shadow:0 0 0 6px rgba(240,233,160,0.08), var(--shadow-lg); animation:loadPulse 1.6s ease-in-out infinite;
+  background:radial-gradient(circle at 35% 30%, rgba(240,233,160,0.16), transparent 70%);
+}
+@keyframes loadPulse{ 0%,100%{ transform:scale(1); box-shadow:0 0 0 6px rgba(240,233,160,0.08), var(--shadow-lg);} 50%{ transform:scale(1.08); box-shadow:0 0 0 14px rgba(240,233,160,0.03), var(--shadow-lg);} }
+.load-title{ font-family:var(--font-display); font-style:italic; font-size:1.3rem; color:var(--brass-1); letter-spacing:0.02em; }
+.load-bar{ width:180px; height:3px; border-radius:3px; background:rgba(255,255,255,0.12); overflow:hidden; }
+.load-bar-fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--harbor),var(--brass-2)); animation:loadFill 1.8s var(--ease) forwards; }
+@keyframes loadFill{ to{ width:100%; } }
+.load-caption{ font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--brass-1); opacity:0.55; }
+
+/* mouse-follow glow — a soft light that trails the cursor on desktop */
+#mouseGlow{
+  position:fixed; z-index:6; width:420px; height:420px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(240,233,160,0.10), rgba(240,233,160,0.03) 45%, transparent 70%);
+  transform:translate(-50%,-50%); left:-500px; top:-500px; transition:opacity .4s ease; opacity:0; will-change:transform;
+}
+@media (hover:hover) and (pointer:fine){ #mouseGlow.on{ opacity:1; } }
+
+/* glassmorphism card variant, used for premium overlays */
+.glass{
+  background:var(--glass-bg); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%);
+  border:1px solid var(--glass-border); box-shadow:var(--shadow-md);
+}
+
+/* quote rotator — auto-cycling friendship lines */
+.quote-rotator{ min-height:3.4em; display:flex; align-items:center; justify-content:center; }
+.quote-rotator .quote-line{ transition:opacity .45s ease, transform .45s ease; }
+.quote-rotator .quote-line.fade{ opacity:0; transform:translateY(6px); }
+
+/* "why you're special" flip cards */
+.special-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:14px; width:100%; max-width:520px; margin-top:6px; }
+.special-card{ aspect-ratio:1/1; perspective:800px; cursor:pointer; }
+.special-card-inner{ width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform .6s var(--ease); }
+.special-card.flipped .special-card-inner{ transform:rotateY(180deg); }
+.special-face{ position:absolute; inset:0; border-radius:var(--r-m); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:10px; backface-visibility:hidden; text-align:center; }
+.special-front{ background:var(--paper-2); border:1px solid rgba(0,0,0,0.08); box-shadow:var(--shadow-sm); }
+.special-front .icon{ font-size:1.6rem; }
+.special-front .label{ font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.06em; color:var(--ink-soft); text-transform:uppercase; }
+.special-back{ background:linear-gradient(150deg,var(--paper-1),var(--paper-3)); border:1px solid var(--brass-3); transform:rotateY(180deg); font-family:var(--font-hand); font-size:1rem; color:var(--stamp-red-dark); line-height:1.35; }
+
+/* reaction bar — finale sticker reactions */
+.reaction-bar{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:6px 0; }
+.reaction-btn{ display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:999px; border:1px solid rgba(0,0,0,0.1);
+  background:rgba(255,255,255,0.35); cursor:pointer; font-family:var(--font-mono); font-size:0.78rem; color:var(--ink); transition:all .2s var(--ease); }
+.reaction-btn:hover{ transform:translateY(-2px); background:rgba(255,255,255,0.55); box-shadow:var(--shadow-sm); }
+.reaction-btn .count{ font-weight:700; color:var(--stamp-red); min-width:1ch; }
+.reaction-btn.popped{ animation:reactionPop .4s var(--ease); }
+@keyframes reactionPop{ 0%{ transform:scale(1);} 40%{ transform:scale(1.25);} 100%{ transform:scale(1);} }
+
+/* back-to-cover control, docked opposite the masthead actions */
+#backToCover{ position:fixed; z-index:70; bottom:calc(var(--sp-5) + 90px); right:var(--sp-5); opacity:0; pointer-events:none; transform:translateY(8px); transition:all .3s var(--ease); }
+#backToCover.show{ opacity:1; pointer-events:all; transform:translateY(0); }
+@media (max-width:900px){ #backToCover{ bottom:96px; right:var(--sp-4); } }
 
 /* ==========================================================================
    TOP CHROME — cover title + controls, not a floating icon soup
@@ -91,7 +162,7 @@ h1,h2,.font-display{ font-family:var(--font-display); }
   border:1px solid var(--cover-edge); background:rgba(255,255,255,0.04); color:var(--brass-1); font-size:1rem; cursor:pointer;
   transition:transform .2s var(--ease), background .2s ease, box-shadow .2s ease;
 }
-.chip-btn:hover{ transform:translateY(-2px); background:rgba(239,223,176,0.1); box-shadow:0 6px 18px rgba(0,0,0,0.35); }
+.chip-btn:hover{ transform:translateY(-2px); background:rgba(240,233,160,0.1); box-shadow:0 6px 18px rgba(0,0,0,0.35); }
 .chip-btn:active{ transform:scale(0.94); }
 
 /* ==========================================================================
@@ -100,7 +171,7 @@ h1,h2,.font-display{ font-family:var(--font-display); }
 .stamp-rail{ position:fixed; z-index:65; top:50%; left:var(--sp-5); transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; }
 .stamp-rail-track{ display:flex; flex-direction:column; gap:10px; }
 .stamp-tab{
-  width:44px; height:44px; border-radius:50%; border:2px solid rgba(239,223,176,0.35);
+  width:44px; height:44px; border-radius:50%; border:2px solid rgba(240,233,160,0.35);
   background:rgba(17,23,38,0.55); backdrop-filter:blur(6px); color:var(--brass-1); font-size:1rem;
   display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative;
   transition:all .3s var(--ease); font-family:var(--font-mono);
@@ -171,9 +242,11 @@ h1,h2,.font-display{ font-family:var(--font-display); }
 /* buttons — premium, tactile, paper-appropriate */
 .btn{
   font-family:var(--font-body); font-weight:700; font-size:0.92rem; padding:13px 28px; border-radius:var(--r-s);
-  cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; justify-content:center;
+  cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; justify-content:center; position:relative; overflow:hidden;
   transition:transform .2s var(--ease), box-shadow .2s ease, background .2s ease;
 }
+.btn-ripple{ position:absolute; border-radius:50%; background:rgba(255,255,255,0.5); transform:scale(0); opacity:0.9; animation:rippleGrow .6s ease-out forwards; pointer-events:none; }
+@keyframes rippleGrow{ to{ transform:scale(2.6); opacity:0; } }
 .btn:active{ transform:scale(0.97); }
 .btn:disabled{ opacity:0.5; cursor:default; transform:none !important; }
 .btn-primary{ background:var(--cover-1); color:var(--brass-1); box-shadow:0 6px 0 var(--cover-2); }
@@ -190,11 +263,11 @@ h1,h2,.font-display{ font-family:var(--font-display); }
 .postcard{
   background:var(--paper-2); border:1px solid rgba(0,0,0,0.08); border-radius:var(--r-m);
   box-shadow:0 14px 34px rgba(0,0,0,0.16), 0 1px 0 rgba(255,255,255,0.5) inset;
-  position:relative;
+  position:relative; transition:transform .25s var(--ease); will-change:transform;
 }
 .postcard::after{ content:''; position:absolute; top:10px; right:14px; width:34px; height:34px; border-radius:50%;
   border:1px dashed rgba(36,32,48,0.25); pointer-events:none; }
-.tape{ position:absolute; width:56px; height:20px; background:rgba(239,223,176,0.55); border:1px solid rgba(0,0,0,0.05);
+.tape{ position:absolute; width:56px; height:20px; background:rgba(240,233,160,0.55); border:1px solid rgba(0,0,0,0.05);
   box-shadow:0 3px 6px rgba(0,0,0,0.12); pointer-events:none; }
 
 /* ==========================================================================
@@ -205,7 +278,7 @@ h1,h2,.font-display{ font-family:var(--font-display); }
   border-right:2px solid var(--stamp-red); white-space:nowrap; overflow:hidden; padding-right:6px; cursor:pointer; }
 .title.done{ border-right:none; white-space:normal; }
 .title.rainbow{ animation:rainbowCycle 1.4s linear infinite; }
-@keyframes rainbowCycle{ 0%{color:#a23e2f;} 25%{color:#4c7c93;} 50%{color:#8a6a35;} 75%{color:#5a5346;} 100%{color:#a23e2f;} }
+@keyframes rainbowCycle{ 0%{color:#b25a2e;} 25%{color:#3f7a4a;} 50%{color:#8a7a1f;} 75%{color:#526138;} 100%{color:#b25a2e;} }
 
 /* ==========================================================================
    PAGE 02 — CALENDAR ENTRY
@@ -256,24 +329,25 @@ h1,h2,.font-display{ font-family:var(--font-display); }
   font-size:0.68rem; font-weight:700; padding:5px 11px; border-radius:12px; white-space:nowrap; opacity:0; transition:all .3s cubic-bezier(.2,.9,.3,1.3); pointer-events:none; }
 .speech-bubble.show{ opacity:1; transform:translateX(-50%) scale(1) translateY(-6px); }
 .quote-line{ color:var(--ink-soft); font-size:0.98rem; line-height:1.7; font-style:italic; }
+.compass-wrap{ width:96px; height:96px; margin:4px auto 0; cursor:pointer; }
+.compass-dial{ width:100%; height:100%; border-radius:50%; position:relative;
+  background:radial-gradient(circle at 34% 28%, var(--paper-1), var(--paper-3) 75%); border:3px solid var(--brass-2);
+  box-shadow:0 10px 22px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; }
+.compass-dial::before{ content:'N'; position:absolute; top:6px; font-family:var(--font-mono); font-weight:700; font-size:0.6rem; color:var(--ink-soft); }
+.compass-dial::after{ content:''; position:absolute; width:6px; height:6px; border-radius:50%; background:var(--brass-3); }
+.compass-needle{ width:5px; height:64%; border-radius:5px; transform-origin:50% 50%; transition:transform 1.15s cubic-bezier(.18,.9,.2,1.15);
+  background:linear-gradient(180deg, var(--stamp-red) 0%, var(--stamp-red) 48%, var(--harbor) 52%, var(--harbor) 100%); }
+.compass-label{ font-family:var(--font-mono); font-size:0.66rem; color:var(--ink-soft); text-align:center; letter-spacing:0.03em; max-width:220px; }
 
 /* ==========================================================================
-   PAGE 05 — RECORD (song)
+   PAGE 05 — SCRATCH POSTCARD
    ========================================================================== */
-.record-card{ display:flex; align-items:center; gap:24px; flex-wrap:wrap; justify-content:center; padding:28px 30px; }
-.vinyl{ width:112px; height:112px; border-radius:50%; flex-shrink:0;
-  background:radial-gradient(circle at center, #191c26 0 18%, #262a38 19% 30%, #191c26 31% 40%, #262a38 41% 50%, #191c26 51% 60%, #262a38 61% 70%, #191c26 71% 100%);
-  border:3px solid var(--brass-2); position:relative; box-shadow:0 10px 24px rgba(0,0,0,0.35); transition:transform 6s linear; }
-.vinyl::after{ content:'💙'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.1rem; background:var(--brass-2);
-  width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-.vinyl.spinning{ animation:spinVinyl 4s linear infinite; }
-@keyframes spinVinyl{ to{ transform:rotate(360deg); } }
-.record-info{ text-align:left; display:flex; flex-direction:column; gap:8px; max-width:300px; }
-.record-name{ font-family:var(--font-display); font-style:italic; font-size:1.18rem; color:var(--stamp-red); }
-.record-caption{ color:var(--ink-soft); font-size:0.85rem; line-height:1.55; }
-.eq-bars{ display:flex; align-items:flex-end; gap:4px; height:28px; margin-top:4px; }
-.eq-bars span{ width:4px; background:var(--harbor); border-radius:2px; height:20%; transition:height .15s ease; }
-.play-btn{ width:50px; height:50px; border-radius:50%; flex-shrink:0; font-size:1.1rem; padding:0; box-shadow:0 5px 0 var(--cover-2); }
+.scratch-wrap{ position:relative; width:100%; max-width:420px; height:190px; border-radius:var(--r-m); overflow:hidden; box-shadow:0 14px 34px rgba(0,0,0,0.2); }
+.scratch-message{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:26px;
+  font-family:var(--font-display); font-style:italic; font-size:1.15rem; line-height:1.5; color:var(--stamp-red); background:var(--paper-2); }
+.scratch-canvas{ position:absolute; inset:0; cursor:grab; touch-action:none; }
+.scratch-canvas.revealed{ opacity:0; transition:opacity .6s ease; pointer-events:none; }
+.scratch-progress{ font-family:var(--font-mono); font-size:0.72rem; color:var(--ink-soft); letter-spacing:0.05em; }
 
 /* ==========================================================================
    PAGE 06 — FUNNY ZONE / CERTIFICATE
@@ -281,7 +355,7 @@ h1,h2,.font-display{ font-family:var(--font-display); }
 .funny-card,.cert-card{ width:100%; max-width:420px; padding:22px 24px; display:flex; flex-direction:column; align-items:center; gap:10px; }
 .funny-eyebrow{ font-family:var(--font-mono); text-transform:uppercase; letter-spacing:0.1em; font-size:0.62rem; color:var(--stamp-red); }
 .funny-line{ font-size:0.98rem; line-height:1.6; min-height:2.6em; transition:opacity .3s ease; }
-.cert-box{ width:100%; border:2px dashed var(--brass-3); border-radius:var(--r-s); padding:18px 16px; text-align:center; background:rgba(239,223,176,0.25); }
+.cert-box{ width:100%; border:2px dashed var(--brass-3); border-radius:var(--r-s); padding:18px 16px; text-align:center; background:rgba(240,233,160,0.25); }
 .cert-seal{ font-size:1.6rem; margin-bottom:6px; }
 .cert-title{ font-family:var(--font-display); font-style:italic; font-size:1.1rem; color:var(--stamp-red); margin-bottom:6px; }
 .cert-body{ color:var(--ink-soft); font-size:0.84rem; margin:4px 0; }
@@ -292,7 +366,19 @@ h1,h2,.font-display{ font-family:var(--font-display); }
 .cert-date{ font-family:var(--font-mono); color:var(--harbor-dark); font-size:0.65rem; margin-top:10px; }
 
 /* ==========================================================================
-   PAGE 07 — SCRAPBOOK
+   PAGE 07 — FORTUNE COOKIE
+   ========================================================================== */
+.fortune-cookie{ font-size:4.4rem; background:none; border:none; cursor:pointer; line-height:1; filter:drop-shadow(0 10px 18px rgba(0,0,0,0.25));
+  transition:transform .2s cubic-bezier(.3,.8,.3,1.4); }
+.fortune-cookie:hover{ transform:scale(1.08) rotate(-4deg); }
+.fortune-cookie.cracked{ animation:cookieCrack .5s ease; }
+@keyframes cookieCrack{ 0%{ transform:scale(1);} 30%{ transform:scale(1.25) rotate(-8deg);} 55%{ transform:scale(0.9) rotate(6deg);} 100%{ transform:scale(1) rotate(0);} }
+.fortune-strip{ width:100%; max-width:360px; padding:16px 20px; text-align:center; font-family:var(--font-display); font-style:italic; color:var(--stamp-red);
+  font-size:1rem; line-height:1.55; opacity:0; transform:translateY(-8px) scaleY(0.6); transform-origin:top; transition:all .4s var(--ease); min-height:0; }
+.fortune-strip.show{ opacity:1; transform:translateY(0) scaleY(1); padding:16px 20px; }
+
+/* ==========================================================================
+   PAGE 08 — SCRAPBOOK
    ========================================================================== */
 .scrapbook{ position:relative; width:100%; max-width:640px; min-height:300px; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:20px; padding:16px 6px; cursor:pointer; }
 .scrapbook-lines{ position:absolute; inset:0; pointer-events:none; z-index:0; opacity:0.3; }
@@ -313,7 +399,7 @@ h1,h2,.font-display{ font-family:var(--font-display); }
 .modal-card p{ color:var(--ink); line-height:1.6; margin-bottom:14px; font-size:0.92rem; }
 
 /* ==========================================================================
-   PAGE 08 — GAUGE (friendship meter)
+   PAGE 09 — GAUGE (friendship meter)
    ========================================================================== */
 .gauge-card{ width:100%; max-width:400px; padding:30px; display:flex; flex-direction:column; align-items:center; gap:14px; }
 .gauge-value{ font-family:var(--font-display); font-size:2.2rem; color:var(--stamp-red); }
@@ -323,16 +409,43 @@ input[type="range"].gauge-slider::-webkit-slider-thumb{ -webkit-appearance:none;
 input[type="range"].gauge-slider::-moz-range-thumb{ width:20px; height:20px; border-radius:50%; background:var(--paper-1); border:3px solid var(--ink); cursor:pointer; }
 
 /* ==========================================================================
-   PAGE 09 — MINI GAME
+   PAGE 10 — CONSTELLATION
    ========================================================================== */
-.game-stage{ position:relative; width:100%; max-width:580px; height:280px; overflow:hidden; }
-.game-hud{ position:absolute; top:10px; left:0; right:0; display:flex; justify-content:space-between; padding:0 16px; font-family:var(--font-mono); font-weight:700; color:var(--stamp-red); font-size:0.82rem; z-index:3; }
-.game-heart{ position:absolute; font-size:1.5rem; cursor:pointer; user-select:none; animation:gameFall linear forwards; background:none; border:none; padding:4px; }
-@keyframes gameFall{ from{ transform:translateY(-10%);} to{ transform:translateY(300px);} }
-.game-pop{ position:absolute; font-family:var(--font-mono); font-size:0.78rem; color:var(--stamp-red); pointer-events:none; animation:wishFloat 0.8s ease-out forwards; font-weight:700; }
+.constellation-stage{ width:100%; max-width:420px; padding:12px; }
+#constellationSvg{ width:100%; height:auto; display:block; }
+.const-star{ cursor:pointer; }
+.const-star circle{ fill:var(--brass-1); stroke:var(--brass-3); stroke-width:1.5; transition:all .2s var(--ease); }
+.const-star.done circle{ fill:var(--stamp-red); stroke:var(--stamp-red-dark); }
+.const-star text{ font-family:var(--font-mono); font-size:9px; fill:var(--ink); text-anchor:middle; pointer-events:none; }
+.const-line{ stroke:var(--stamp-red); stroke-width:2; stroke-dasharray:220; stroke-dashoffset:220; animation:drawLine .5s ease forwards; }
+@keyframes drawLine{ to{ stroke-dashoffset:0; } }
+.const-heart{ opacity:0; fill:none; stroke:var(--harbor); stroke-width:2; transition:opacity .6s ease; }
+.const-heart.show{ opacity:0.5; }
 
 /* ==========================================================================
-   PAGE 10 — SEALED LETTER
+   PAGE 11 — MEMORY MATCH (new, replaces the old catch-hearts game)
+   ========================================================================== */
+.match-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; width:100%; max-width:340px; }
+.match-card{ aspect-ratio:1/1; cursor:pointer; perspective:600px; }
+.match-card-inner{ width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform .5s var(--ease); }
+.match-card.flipped .match-card-inner, .match-card.matched .match-card-inner{ transform:rotateY(180deg); }
+.match-face{ position:absolute; inset:0; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; backface-visibility:hidden; }
+.match-front{ background:var(--paper-2); border:2px dashed var(--brass-3); color:var(--brass-3); font-family:var(--font-mono); font-size:0.95rem; }
+.match-back{ background:var(--paper-1); border:2px solid var(--stamp-red); transform:rotateY(180deg); }
+.match-card.matched .match-back{ opacity:0.55; }
+
+/* ==========================================================================
+   PAGE 12 — MOOD RING / AURA (new)
+   ========================================================================== */
+.mood-ring{ width:110px; height:110px; border-radius:50%; border:6px solid var(--brass-2); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 10px 26px rgba(0,0,0,0.25); transition:transform .3s var(--ease); background:radial-gradient(circle at 35% 30%, #fffef4, var(--paper-3) 75%); }
+.mood-ring:hover{ transform:scale(1.06) rotate(-3deg); }
+.mood-gem{ width:60px; height:60px; border-radius:50%; transition:background 0.6s ease, box-shadow .6s ease; background:linear-gradient(135deg,#b9cc79,#8a7a1f); box-shadow:0 0 0 rgba(0,0,0,0); }
+.aura-name{ font-family:var(--font-display); font-style:italic; font-size:1.35rem; color:var(--stamp-red); min-height:1.3em; transition:opacity .3s ease; }
+.aura-desc{ color:var(--ink-soft); font-size:0.9rem; max-width:400px; line-height:1.6; min-height:2.8em; transition:opacity .3s ease; }
+
+/* ==========================================================================
+   PAGE 13 — SEALED LETTER
    ========================================================================== */
 .envelope-wrap{ position:relative; width:260px; height:188px; margin:10px auto; cursor:pointer; }
 .envelope-back{ position:absolute; inset:0; border-radius:6px; background:linear-gradient(160deg,#e9ddc0,#d8c99e); box-shadow:0 15px 34px rgba(0,0,0,0.28); }
@@ -349,12 +462,48 @@ input[type="range"].gauge-slider::-moz-range-thumb{ width:20px; height:20px; bor
 .ps-note.show{ max-height:80px; opacity:1; }
 
 /* ==========================================================================
-   PAGE 11 — FINALE
+   PAGE 14 — FIELD REPORT
+   ========================================================================== */
+.weather-card{ width:100%; max-width:340px; padding:32px 26px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+.weather-icon{ font-size:3.1rem; animation:weatherFloat 3s ease-in-out infinite; }
+@keyframes weatherFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+.weather-temp{ font-family:var(--font-display); font-style:italic; font-size:1.55rem; color:var(--stamp-red); }
+.weather-desc{ color:var(--ink-soft); font-size:0.88rem; line-height:1.6; min-height:3.2em; }
+
+/* ==========================================================================
+   PAGE 15 — CHARM BRACELET (new)
+   ========================================================================== */
+.bracelet-string{ width:100%; max-width:380px; min-height:64px; border-bottom:3px solid var(--brass-3); display:flex; align-items:flex-end;
+  justify-content:center; gap:8px; padding-bottom:8px; flex-wrap:wrap; }
+.bracelet-placeholder{ font-family:var(--font-mono); font-size:0.72rem; color:var(--ink-soft); opacity:0.6; padding-bottom:6px; }
+.bracelet-charm{ font-size:1.5rem; animation:charmDangle 2.4s ease-in-out infinite; }
+@keyframes charmDangle{ 0%,100%{ transform:rotate(-6deg);} 50%{ transform:rotate(6deg);} }
+.charm-tray{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:380px; }
+.charm-btn{ font-size:1.5rem; background:var(--paper-2); border:1px solid rgba(0,0,0,0.08); border-radius:50%; width:48px; height:48px; cursor:pointer;
+  transition:transform .2s var(--ease); }
+.charm-btn:hover{ transform:scale(1.15) rotate(-6deg); }
+
+/* ==========================================================================
+   PAGE 16 — WISH JAR
+   ========================================================================== */
+.jar-wrap{ width:160px; height:190px; padding:0; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; background:transparent; box-shadow:none; border:none; }
+.jar-glass{ position:relative; width:140px; height:170px; border-radius:14px 14px 30px 30px; border:3px solid rgba(76,124,147,0.55);
+  background:linear-gradient(180deg, rgba(76,124,147,0.06), rgba(76,124,147,0.12)); overflow:hidden; box-shadow:0 12px 26px rgba(0,0,0,0.18) inset, 0 10px 20px rgba(0,0,0,0.15); }
+.jar-lid{ position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:96px; height:18px; border-radius:6px; background:var(--brass-2); border:2px solid var(--brass-3); }
+.jar-fill{ position:absolute; left:0; right:0; bottom:0; height:0%; background:linear-gradient(180deg, rgba(178,90,46,0.35), rgba(178,90,46,0.55));
+  transition:height .6s var(--ease); display:flex; flex-wrap:wrap; align-content:flex-end; justify-content:center; gap:2px; padding:4px; overflow:hidden; }
+.jar-note{ font-size:0.9rem; }
+.wish-count{ font-family:var(--font-mono); font-size:0.75rem; color:var(--ink-soft); }
+.falling-note{ position:fixed; z-index:150; font-family:var(--font-hand); font-size:1rem; color:var(--stamp-red); background:var(--paper-2);
+  border:1px solid rgba(0,0,0,0.1); border-radius:6px; padding:4px 10px; box-shadow:0 6px 14px rgba(0,0,0,0.2); pointer-events:none; }
+
+/* ==========================================================================
+   PAGE 17 — FINALE
    ========================================================================== */
 .final-title{ font-size:clamp(1.8rem,5.6vw,2.8rem); font-style:italic; color:var(--stamp-red); }
 .final-quote{ color:var(--ink-soft); font-size:1rem; line-height:1.7; margin:10px 0 16px; font-style:italic; }
 #fireworks{ position:fixed; inset:0; z-index:5; pointer-events:none; }
-.stamp-shelf{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:12px 0; max-width:420px; }
+.stamp-shelf{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:12px 0; max-width:460px; }
 .stamp-chip{ width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;
   background:rgba(0,0,0,0.04); border:1px dashed rgba(36,32,48,0.25); opacity:0.35; filter:grayscale(1); transition:all .3s ease; }
 .stamp-chip.earned{ opacity:1; filter:none; border-style:solid; border-color:var(--stamp-red); background:rgba(155,74,56,0.08); }
@@ -371,7 +520,7 @@ body.shaking{ animation:screenShake 0.5s ease; }
 @keyframes screenShake{ 0%,100%{ transform:translate(0,0) rotate(0);} 10%{ transform:translate(-8px,4px) rotate(-1deg);} 20%{ transform:translate(7px,-5px) rotate(1deg);}
   30%{ transform:translate(-6px,6px) rotate(-1deg);} 40%{ transform:translate(8px,-4px) rotate(1deg);} 50%{ transform:translate(-7px,3px) rotate(-1deg);}
   60%{ transform:translate(6px,-6px) rotate(1deg);} 70%{ transform:translate(-5px,5px) rotate(-0.5deg);} 80%{ transform:translate(4px,-3px) rotate(0.5deg);} 90%{ transform:translate(-3px,2px) rotate(0);} }
-.chaos-overlay{ position:fixed; inset:0; z-index:800; pointer-events:none; opacity:0; background:conic-gradient(from 0deg,#9b4a38,#c9a969,#4c7c93,#5a5346,#9b4a38); mix-blend-mode:multiply; transition:opacity .2s ease; }
+.chaos-overlay{ position:fixed; inset:0; z-index:800; pointer-events:none; opacity:0; background:conic-gradient(from 0deg,#a3512e,#c7a94e,#5f7a52,#5c5a3f,#a3512e); mix-blend-mode:multiply; transition:opacity .2s ease; }
 .chaos-overlay.on{ opacity:0.55; animation:discoSpin 1.4s linear infinite; }
 @keyframes discoSpin{ to{ transform:rotate(360deg) scale(1.4); } }
 .chaos-text{ position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.4); z-index:900; font-family:var(--font-display); font-style:italic; font-weight:600;
@@ -398,13 +547,21 @@ body.shaking{ animation:screenShake 0.5s ease; }
   .pin{ width:70px; height:70px; font-size:1.5rem; }
   .envelope-wrap{ width:220px; height:158px; }
   .letter{ width:180px; }
-  .record-card{ flex-direction:column; padding:20px; }
-  .record-info{ text-align:center; align-items:center; }
+  .scratch-wrap{ height:220px; }
+  .match-grid{ gap:8px; }
   .masthead{ padding:var(--sp-3) var(--sp-4); }
 }
 </style>
 </head>
 <body>
+
+  <div id="loadScreen" role="status" aria-live="polite">
+    <div class="load-stamp">🎀</div>
+    <p class="load-title">unpacking the archive…</p>
+    <div class="load-bar"><div class="load-bar-fill"></div></div>
+    <span class="load-caption">friendship day · entry 001</span>
+  </div>
+  <div id="mouseGlow" aria-hidden="true"></div>
 
   <div class="desk"></div>
   <div class="desk-vignette"></div>
@@ -421,14 +578,16 @@ body.shaking{ animation:screenShake 0.5s ease; }
     <span class="masthead-mark">ARCHIVE No. 001 — FRIENDSHIP DAY</span>
     <div class="masthead-actions">
       <button id="themeToggle" class="chip-btn" aria-label="Switch cover finish" title="Switch finish">🖋️</button>
-      <button id="musicToggle" class="chip-btn" aria-label="Toggle ambient music" aria-pressed="false">🔇</button>
+      <button id="musicToggle" class="chip-btn" aria-label="Toggle ambient sound" aria-pressed="false">🔇</button>
     </div>
   </header>
 
   <nav class="stamp-rail" aria-label="Jump to a page">
     <div class="stamp-rail-track" id="stampTabs" role="tablist"></div>
-    <span class="page-count" id="pageCount">01 / 11</span>
+    <span class="page-count" id="pageCount">01 / 17</span>
   </nav>
+
+  <button id="backToCover" class="chip-btn" aria-label="Back to cover" title="Back to cover">⤴️</button>
 
   <main id="app">
     <div class="journal">
@@ -507,26 +666,26 @@ body.shaking{ animation:screenShake 0.5s ease; }
                 <div class="speech-bubble" id="bubbleGirl">come here! 🥺</div>
               </button>
             </div>
-            <p class="quote-line">No matter where life takes us, you'll always be my favorite person to laugh with.</p>
+            <div class="quote-rotator"><p class="quote-line" id="rotatingQuote">No matter where life takes us, you'll always be my favorite person to laugh with.</p></div>
+            <div class="compass-wrap" id="compassWrap" role="button" tabindex="0" aria-label="Spin the compass">
+              <div class="compass-dial"><div class="compass-needle" id="compassNeedle"></div></div>
+            </div>
+            <p class="compass-label">spin it as many times as you want — it always settles pointing back to you</p>
             <button class="btn btn-primary next-btn" data-next="4">Turn the page →</button>
           </div>
         </section>
 
-        <!-- PAGE 05 — RECORD -->
+        <!-- PAGE 05 — SCRATCH POSTCARD -->
         <section class="page" data-page="4" id="page4">
           <div class="page-inner">
             <span class="folio">entry no. 05</span>
-            <h2 class="page-title">Our song</h2>
-            <div class="record-card postcard">
-              <button class="btn btn-ghost play-btn" id="songPlayBtn" aria-label="Play song">▶</button>
-              <div class="vinyl" id="vinylDisc" aria-hidden="true"></div>
-              <div class="record-info">
-                <span class="record-name" id="songName">"Friends Like This" — an original tune</span>
-                <p class="record-caption" id="songCaption">A short original instrumental, written in the spirit of every friendship anthem out there — because real ones can't be replaced, and neither can you.</p>
-                <div class="eq-bars" id="eqBars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-                <button class="btn btn-stamp" id="songLangToggle" style="padding:8px 16px; font-size:0.8rem;">🎶 Switch to Hindi tune</button>
-              </div>
+            <h2 class="page-title">Scratch to reveal</h2>
+            <p class="page-lede" style="font-size:0.86rem;">Scratch the postcard below with your mouse or finger ✨</p>
+            <div class="scratch-wrap" id="scratchWrap">
+              <div class="scratch-message" id="scratchMessage">You're the friend everyone wishes they had — glad life gave you to me. 💚</div>
+              <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
             </div>
+            <p class="scratch-progress" id="scratchHint">scratched: 0%</p>
             <button class="btn btn-primary next-btn" data-next="5">Turn the page →</button>
           </div>
         </section>
@@ -558,21 +717,37 @@ body.shaking{ animation:screenShake 0.5s ease; }
           </div>
         </section>
 
-        <!-- PAGE 07 — SCRAPBOOK -->
+        <!-- PAGE 07 — FORTUNE COOKIE -->
         <section class="page" data-page="6" id="page6">
           <div class="page-inner">
             <span class="folio">entry no. 07</span>
-            <h2 class="page-title">Memory scrapbook</h2>
-            <p class="page-lede" style="font-size:0.86rem;">Tap a polaroid to open a memory ✨</p>
-            <div class="scrapbook" id="galaxy"><svg class="scrapbook-lines" id="galaxyLines" aria-hidden="true"></svg></div>
+            <h2 class="page-title">Crack a fortune cookie</h2>
+            <p class="page-lede" style="font-size:0.86rem;">Tap the cookie for a friendship fortune 🥠</p>
+            <button class="fortune-cookie" id="fortuneCookie" aria-label="Crack the fortune cookie">🥠</button>
+            <p class="fortune-strip" id="fortuneStrip" aria-live="polite"></p>
+            <button class="btn btn-ghost" id="fortuneAgainBtn" style="display:none;">🥠 Crack another</button>
             <button class="btn btn-primary next-btn" data-next="7">Turn the page →</button>
           </div>
         </section>
 
-        <!-- PAGE 08 — GAUGE -->
+        <!-- PAGE 08 — SCRAPBOOK -->
         <section class="page" data-page="7" id="page7">
           <div class="page-inner">
             <span class="folio">entry no. 08</span>
+            <h2 class="page-title">Memory scrapbook</h2>
+            <p class="page-lede" style="font-size:0.86rem;">Tap a polaroid to open a memory ✨</p>
+            <div class="scrapbook" id="galaxy"><svg class="scrapbook-lines" id="galaxyLines" aria-hidden="true"></svg></div>
+            <h2 class="page-title" style="font-size:1.2rem; margin-top:14px;">Why you're special</h2>
+            <p class="page-lede" style="font-size:0.82rem;">Tap a card to flip it 🍃</p>
+            <div class="special-grid" id="specialGrid"></div>
+            <button class="btn btn-primary next-btn" data-next="8">Turn the page →</button>
+          </div>
+        </section>
+
+        <!-- PAGE 09 — GAUGE -->
+        <section class="page" data-page="8" id="page8">
+          <div class="page-inner">
+            <span class="folio">entry no. 09</span>
             <h2 class="page-title">Friendship gauge</h2>
             <div class="gauge-card postcard">
               <div class="gauge-value" id="meterValue">50%</div>
@@ -580,34 +755,60 @@ body.shaking{ animation:screenShake 0.5s ease; }
               <label class="sr-only" for="meterSlider">Friendship level</label>
               <input type="range" min="0" max="100" value="50" class="gauge-slider" id="meterSlider">
             </div>
-            <button class="btn btn-primary next-btn" data-next="8">Turn the page →</button>
+            <button class="btn btn-primary next-btn" data-next="9">Turn the page →</button>
           </div>
         </section>
 
-        <!-- PAGE 09 — MINI GAME -->
-        <section class="page" data-page="8" id="page8">
-          <div class="page-inner">
-            <span class="folio">entry no. 09</span>
-            <h2 class="page-title">Catch the hearts 💙</h2>
-            <p class="page-lede" id="gameHint" style="font-size:0.86rem;" aria-live="polite">Tap the hearts before they float away — 15 seconds, go!</p>
-            <div class="game-stage postcard" id="gameStage">
-              <div class="game-hud"><span id="gameScore">Score: 0</span><span id="gameTime">⏱ 15s</span></div>
-            </div>
-            <button class="btn btn-primary" id="gameStartBtn">🎮 Start game</button>
-            <button class="btn btn-ghost next-btn" data-next="9">Turn the page →</button>
-          </div>
-        </section>
-
-        <!-- PAGE 10 — SEALED LETTER -->
+        <!-- PAGE 10 — CONSTELLATION -->
         <section class="page" data-page="9" id="page9">
           <div class="page-inner">
             <span class="folio">entry no. 10</span>
+            <h2 class="page-title">Connect the stars</h2>
+            <p class="page-lede" style="font-size:0.86rem;">Tap the numbered stars in order, 1 through 6 ⭐</p>
+            <div class="constellation-stage postcard" id="constellationStage">
+              <svg id="constellationSvg" viewBox="0 0 400 260"></svg>
+            </div>
+            <p class="scratch-progress" id="constellationHint">0 / 6 stars connected</p>
+            <button class="btn btn-primary next-btn" data-next="10">Turn the page →</button>
+          </div>
+        </section>
+
+        <!-- PAGE 11 — MEMORY MATCH -->
+        <section class="page" data-page="10" id="page10">
+          <div class="page-inner">
+            <span class="folio">entry no. 11</span>
+            <h2 class="page-title">Memory match</h2>
+            <p class="page-lede" style="font-size:0.86rem;">Flip two cards at a time to find the matching pairs 🎴</p>
+            <div class="match-grid" id="matchGrid"></div>
+            <p class="scratch-progress" id="matchHint">0 / 6 pairs found</p>
+            <button class="btn btn-ghost" id="matchResetBtn">🔄 Shuffle again</button>
+            <button class="btn btn-primary next-btn" data-next="11">Turn the page →</button>
+          </div>
+        </section>
+
+        <!-- PAGE 12 — MOOD RING -->
+        <section class="page" data-page="11" id="page11">
+          <div class="page-inner">
+            <span class="folio">entry no. 12</span>
+            <h2 class="page-title">Check your friendship aura</h2>
+            <p class="page-lede" style="font-size:0.86rem;">Tap the mood ring to reveal today's aura ✨</p>
+            <button class="mood-ring" id="moodRing" aria-label="Tap the mood ring"><span class="mood-gem" id="moodGem"></span></button>
+            <div class="aura-name" id="auraName">tap to reveal</div>
+            <p class="aura-desc" id="auraDesc"></p>
+            <button class="btn btn-primary next-btn" data-next="12">Turn the page →</button>
+          </div>
+        </section>
+
+        <!-- PAGE 13 — SEALED LETTER -->
+        <section class="page" data-page="12" id="page12">
+          <div class="page-inner">
+            <span class="folio">entry no. 13</span>
             <h2 class="page-title">A letter, sealed with friendship</h2>
             <div class="envelope-wrap" id="envelopeWrap" role="button" tabindex="0" aria-label="Open the letter">
               <div class="envelope-back"></div>
               <div class="envelope-flap"></div>
               <div class="envelope-front"></div>
-              <button class="wax-seal" aria-label="Wax seal">💙</button>
+              <button class="wax-seal" aria-label="Wax seal">💚</button>
               <div class="letter">
                 <p class="letter-text" id="letterText"></p>
                 <button class="signature" id="letterSignature">— always your best friend</button>
@@ -615,22 +816,71 @@ body.shaking{ animation:screenShake 0.5s ease; }
               </div>
             </div>
             <p class="page-lede" id="envelopeHint" style="font-size:0.84rem;">Tap the envelope to open it</p>
-            <button class="btn btn-primary next-btn" data-next="10">Turn the last page →</button>
+            <button class="btn btn-primary next-btn" data-next="13">Turn the page →</button>
           </div>
         </section>
 
-        <!-- PAGE 11 — FINALE -->
-        <section class="page" data-page="10" id="page10">
+        <!-- PAGE 14 — FIELD REPORT -->
+        <section class="page" data-page="13" id="page13">
+          <div class="page-inner">
+            <span class="folio">entry no. 14</span>
+            <h2 class="page-title">Today's friendship forecast</h2>
+            <div class="weather-card postcard">
+              <div class="weather-icon" id="weatherIcon">☀️</div>
+              <div class="weather-temp" id="weatherTemp">100% Warm</div>
+              <p class="weather-desc" id="weatherDesc">Chance of friendship: 100%. Skies clear of drama, high chance of inside jokes after 3pm.</p>
+              <button class="btn btn-stamp" id="weatherBtn" style="padding:8px 16px; font-size:0.8rem;">🔄 Check tomorrow's forecast</button>
+            </div>
+            <button class="btn btn-primary next-btn" data-next="14">Turn the page →</button>
+          </div>
+        </section>
+
+        <!-- PAGE 15 — CHARM BRACELET -->
+        <section class="page" data-page="14" id="page14">
+          <div class="page-inner">
+            <span class="folio">entry no. 15</span>
+            <h2 class="page-title">Build a charm bracelet</h2>
+            <p class="page-lede" style="font-size:0.86rem;">Tap charms to string them onto your bracelet 🧿</p>
+            <div class="bracelet-string" id="braceletString"><span class="bracelet-placeholder" id="braceletPlaceholder">— empty string, tap a charm below —</span></div>
+            <div class="charm-tray" id="charmTray"></div>
+            <button class="btn btn-ghost" id="braceletClearBtn">🧹 Clear bracelet</button>
+            <button class="btn btn-primary next-btn" data-next="15">Turn the page →</button>
+          </div>
+        </section>
+
+        <!-- PAGE 16 — WISH JAR -->
+        <section class="page" data-page="15" id="page15">
+          <div class="page-inner">
+            <span class="folio">entry no. 16</span>
+            <h2 class="page-title">Drop a wish in the jar</h2>
+            <p class="page-lede" style="font-size:0.86rem;">Write a wish for us and drop it in 🫙</p>
+            <div class="jar-wrap">
+              <div class="jar-glass" id="jarGlass">
+                <div class="jar-lid"></div>
+                <div class="jar-fill" id="jarFill"></div>
+              </div>
+            </div>
+            <span class="wish-count" id="wishCount">0 wishes dropped</span>
+            <label class="sr-only" for="wishInput">Your wish</label>
+            <input type="text" id="wishInput" class="cert-input" placeholder="type a wish for us..." maxlength="60" style="max-width:320px;">
+            <button class="btn btn-primary" id="wishDropBtn">🫙 Drop it in</button>
+            <button class="btn btn-primary next-btn" data-next="16">Turn the last page →</button>
+          </div>
+        </section>
+
+        <!-- PAGE 17 — FINALE -->
+        <section class="page" data-page="16" id="page16">
           <div class="cover-deco" style="top:6%; left:5%;">🎈</div>
           <div class="cover-deco" style="top:8%; right:6%;">🎈</div>
           <div class="cover-deco" style="bottom:8%; left:6%;">🎁</div>
           <div class="cover-deco" style="bottom:6%; right:5%;">🌹</div>
           <div class="page-inner">
             <span class="entry-stamp">🎀 final entry</span>
-            <h2 class="final-title foil">Happy Friendship Day 💙</h2>
+            <h2 class="final-title foil">Happy Friendship Day 💚</h2>
             <p class="final-quote">Even though we're miles apart, you've never been far from my heart as my best friend.</p>
             <p class="page-lede" style="font-size:0.82rem;">passport stamps collected on this journey</p>
             <div class="stamp-shelf" id="stampShelf"></div>
+            <div class="reaction-bar" id="reactionBar"></div>
             <button class="btn btn-danger" id="chaosBtn">🚨 DO NOT PRESS THIS BUTTON 🚨</button>
             <button class="btn btn-primary" id="surpriseBtn">🎁 One last surprise</button>
             <button class="btn btn-ghost" id="hugBtn">🤗 Send a hug</button>
@@ -649,6 +899,46 @@ const rand = (a,b) => a + Math.random()*(b-a);
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  /* ---------------- LOADING SCREEN ---------------- */
+  const loadScreen = $('#loadScreen');
+  window.addEventListener('load', () => {
+    setTimeout(() => { loadScreen?.classList.add('hidden'); }, 650);
+  });
+  // fallback in case the load event already fired
+  setTimeout(() => { loadScreen?.classList.add('hidden'); }, 2600);
+
+  /* ---------------- MOUSE-FOLLOW GLOW ---------------- */
+  const mouseGlow = $('#mouseGlow');
+  let glowShown = false;
+  window.addEventListener('mousemove', (e) => {
+    if (!glowShown){ mouseGlow.classList.add('on'); glowShown = true; }
+    mouseGlow.style.left = e.clientX + 'px'; mouseGlow.style.top = e.clientY + 'px';
+  });
+
+  /* ---------------- BACK TO COVER ---------------- */
+  const backToCoverBtn = $('#backToCover');
+  backToCoverBtn?.addEventListener('click', () => goToPage(0));
+
+  /* ---------------- POSTCARD TILT ---------------- */
+  $$('.postcard').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left)/r.width - 0.5, py = (e.clientY - r.top)/r.height - 0.5;
+      card.style.transform = `perspective(700px) rotateX(${(-py*6).toFixed(2)}deg) rotateY(${(px*6).toFixed(2)}deg) translateY(-3px)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform=''; });
+  });
+
+  /* ---------------- BUTTON RIPPLE ---------------- */
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn'); if (!btn || btn.disabled) return;
+    const rect = btn.getBoundingClientRect(); const size = Math.max(rect.width, rect.height);
+    const span = document.createElement('span'); span.className='btn-ripple';
+    span.style.width = span.style.height = size+'px';
+    span.style.left = (e.clientX - rect.left - size/2)+'px'; span.style.top = (e.clientY - rect.top - size/2)+'px';
+    btn.appendChild(span); setTimeout(() => span.remove(), 650);
+  });
+
   /* ---------------- PARTICLES ---------------- */
   const particleLayer = $('#particleLayer');
   function spawnParticle({ text=null, size, left, bottom='-10%', duration, delay=0, drift=0, rotate=0 }){
@@ -665,23 +955,29 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => el.remove(), duration*1000 + delay*1000 + 200);
   }
   function ambientLoop(){
-    const emojis = ['💙','✨','🌸','🎀'];
-    spawnParticle({ text: emojis[Math.floor(rand(0,emojis.length))], size: rand(13,20), left: rand(0,100)+'vw', duration: rand(10,20), drift: rand(-15,15) });
-    setTimeout(ambientLoop, 1900);
+    const emojis = ['💚','✨','🍃','🎀','🌿','⭐','🦋','🌸','🎈','🌷'];
+    spawnParticle({ text: emojis[Math.floor(rand(0,emojis.length))], size: rand(13,22), left: rand(0,100)+'vw', duration: rand(8,17), drift: rand(-22,22), rotate: rand(-60,60) });
+    setTimeout(ambientLoop, 950);
   }
   ambientLoop();
-  function heartRain(count){ for (let i=0;i<count;i++) setTimeout(() => spawnParticle({ text:'💙', size: rand(16,24), left: rand(0,100)+'vw', duration: rand(4,7) }), i*90); }
+  function heartRain(count){ for (let i=0;i<count;i++) setTimeout(() => spawnParticle({ text:'💚', size: rand(16,24), left: rand(0,100)+'vw', duration: rand(4,7) }), i*90); }
   function confettiRain(count){ const bits=['🎊','🎀','✨','💛']; for (let i=0;i<count;i++) setTimeout(() => spawnParticle({ text: bits[Math.floor(rand(0,bits.length))], size: rand(14,20), left: rand(0,100)+'vw', duration: rand(3.5,6.5) }), i*70); }
 
   /* ---------------- STAMP COLLECTION ---------------- */
   const stampDefs = {
-    wisher:{icon:'⭐',name:'Star gazer',desc:'made a wish on the dust'}, dj:{icon:'🎧',name:'DJ bestie',desc:'played our song'},
+    wisher:{icon:'⭐',name:'Star gazer',desc:'made a wish on the dust'}, scratcher:{icon:'🪙',name:'Scratch master',desc:'revealed the hidden postcard'},
     secret:{icon:'🌙',name:'Secret finder',desc:'found the hidden note'}, cert:{icon:'🏅',name:'Certified BFF',desc:'signed the certificate'},
-    maxed:{icon:'💯',name:'Gauge maxed',desc:'pushed the meter to 100'}, gamer:{icon:'🎮',name:'Heart catcher',desc:'played the mini-game'},
+    maxed:{icon:'💯',name:'Gauge maxed',desc:'pushed the meter to 100'}, matcher:{icon:'🎴',name:'Matchmaker',desc:'cleared the memory match'},
     opener:{icon:'💌',name:'Letter opener',desc:'opened the letter'}, finisher:{icon:'🎆',name:'Journey finisher',desc:'reached the end'},
     chaos:{icon:'🚨',name:'Chaos agent',desc:'pressed the button'}, titletap:{icon:'💫',name:'Title tapper',desc:'found the cover secret'},
     snoop:{icon:'📅',name:'Calendar snoop',desc:'poked the date'}, reunion:{icon:'🫂',name:'Reunion fan',desc:'made the two pins meet'},
-    stargazer2:{icon:'☄️',name:'Archive wanderer',desc:'found a hidden star'}, psfinder:{icon:'💌',name:'P.S. finder',desc:'clicked the signature'}
+    stargazer2:{icon:'☄️',name:'Archive wanderer',desc:'found a hidden star'}, psfinder:{icon:'💌',name:'P.S. finder',desc:'clicked the signature'},
+    compass:{icon:'🧭',name:'True north',desc:'spun the compass'}, forecast:{icon:'⛅',name:'Field meteorologist',desc:'checked the friendship forecast'},
+    fortune:{icon:'🥠',name:'Fortune cracker',desc:'cracked a fortune cookie'}, stargazer3:{icon:'⭐',name:'Constellation drawer',desc:'connected all the stars'},
+    wisher2:{icon:'🫙',name:'Wish keeper',desc:'dropped a wish in the jar'}, aura:{icon:'🔮',name:'Aura reader',desc:'checked the mood ring'},
+    charm:{icon:'🧿',name:'Charm collector',desc:'strung a charm bracelet'},
+    special:{icon:'🌸',name:'Truly known',desc:'flipped every "why you\'re special" card'},
+    reacted:{icon:'😍',name:'Reactor',desc:'left a reaction on the finale'}
   };
   const earned = new Set();
   function unlockStamp(key){
@@ -730,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', () => {
     emojiStorm(35, ['💥','😱','🚨','🔥','😭']); showChaosText('THE INK SPILLED', 150, 700); unlockStamp('chaos');
     setTimeout(() => document.body.classList.remove('shaking'), 550);
     setTimeout(() => { chaosOverlay.classList.remove('on'); showChaosText("jk 😂 relax, it's fine", 100, 900); }, 1100);
-    setTimeout(() => { emojiStorm(24, ['💙','✨','🫶','💫']); showChaosText("...but okay you found the chaos button 🫡\nhere's some extra love", 200, 2400); heartRain(18); }, 2200);
+    setTimeout(() => { emojiStorm(24, ['💚','✨','🫶','💫']); showChaosText("...but okay you found the chaos button 🫡\nhere's some extra love", 200, 2400); heartRain(18); }, 2200);
     setTimeout(() => { chaosRunning = false; }, 5200);
   }
   $('#chaosBtn')?.addEventListener('click', runChaosSequence);
@@ -738,15 +1034,15 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---------------- THEME (cover finish) ---------------- */
   const themeToggle = $('#themeToggle');
   const finishes = [
-    { icon:'🖋️', label:'Indigo leather', vars:{} },
-    { icon:'🌹', label:'Rosewood', vars:{'--stamp-red':'#b5567f','--harbor':'#c98ec9','--cover-1':'#2a1836','--cover-2':'#190f21'} },
-    { icon:'🌇', label:'Sun-worn brass', vars:{'--cover-1':'#332210','--cover-2':'#1e1408','--stamp-red':'#c96a2e','--harbor':'#d99b4e'} }
+    { icon:'🖋️', label:'Olive canvas', vars:{} },
+    { icon:'🌲', label:'Deep forest', vars:{'--cover-1':'#1e2b1a','--cover-2':'#121b10','--cover-edge':'#334a2c','--stamp-red':'#c2703c','--harbor':'#4e8c6a'} },
+    { icon:'🏜️', label:'Desert khaki', vars:{'--cover-1':'#4a4326','--cover-2':'#2c2716','--cover-edge':'#5c5334','--stamp-red':'#b1522e','--harbor':'#8a8f4f'} }
   ];
   let finishIndex = 0;
   themeToggle.addEventListener('click', () => {
     finishIndex = (finishIndex + 1) % finishes.length;
     const f = finishes[finishIndex];
-    ['--stamp-red','--harbor','--cover-1','--cover-2'].forEach(v => document.documentElement.style.removeProperty(v));
+    ['--stamp-red','--harbor','--cover-1','--cover-2','--cover-edge'].forEach(v => document.documentElement.style.removeProperty(v));
     Object.entries(f.vars).forEach(([k,v]) => document.documentElement.style.setProperty(k, v));
     themeToggle.textContent = f.icon; themeToggle.title = f.label;
   });
@@ -773,16 +1069,16 @@ document.addEventListener('DOMContentLoaded', () => {
       m.phase += m.speed;
       const tw = (Math.sin(m.phase)+1)/2;
       dctx.beginPath(); dctx.arc(m.x,m.y,m.r,0,Math.PI*2);
-      dctx.fillStyle = `rgba(239,223,176,${0.15+tw*0.35})`; dctx.fill();
+      dctx.fillStyle = `rgba(240,233,160,${0.15+tw*0.35})`; dctx.fill();
     }
     if (Math.random() < 0.004 && sparks.length < 2) sparks.push({ x:rand(0,dustCanvas.width*0.6), y:rand(0,dustCanvas.height*0.3), len:rand(70,120), speed:rand(5,8), life:1 });
     sparks.forEach(s => {
-      dctx.save(); dctx.strokeStyle = `rgba(239,223,176,${s.life})`; dctx.lineWidth=1.5;
+      dctx.save(); dctx.strokeStyle = `rgba(240,233,160,${s.life})`; dctx.lineWidth=1.5;
       dctx.beginPath(); dctx.moveTo(s.x,s.y); dctx.lineTo(s.x-s.len, s.y-s.len*0.4); dctx.stroke(); dctx.restore();
       s.x += s.speed*4; s.y += s.speed*1.6; s.life -= 0.02;
     });
     sparks = sparks.filter(s => s.life > 0);
-    wishBursts.forEach(p => { dctx.beginPath(); dctx.arc(p.x,p.y,2,0,Math.PI*2); dctx.fillStyle=`rgba(155,74,56,${p.life})`; dctx.fill(); p.x+=p.vx; p.y+=p.vy; p.life-=0.02; });
+    wishBursts.forEach(p => { dctx.beginPath(); dctx.arc(p.x,p.y,2,0,Math.PI*2); dctx.fillStyle=`rgba(163,81,46,${p.life})`; dctx.fill(); p.x+=p.vx; p.y+=p.vy; p.life-=0.02; });
     wishBursts = wishBursts.filter(p => p.life > 0);
     requestAnimationFrame(drawDust);
   }
@@ -814,55 +1110,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (musicOn) startPad(); else stopPad();
   });
 
-  /* ---------------- SONG ---------------- */
-  const songPlayBtn = $('#songPlayBtn'), vinylDisc = $('#vinylDisc'), eqBars = $$('#eqBars span');
-  let songPlaying=false, songTimer=null, eqTimer=null, step=0;
-  const songs = {
-    en:{ name:'"Friends Like This" — an original tune', caption:"A short original instrumental, written in the spirit of every friendship anthem out there — because real ones can't be replaced, and neither can you.",
-      melody:[523.25,587.33,659.25,783.99,880.00,783.99,659.25,587.33,523.25,659.25,783.99,880.00], bass:[130.81,130.81,164.81,164.81,196.00,196.00,146.83,146.83], tempo:320 },
-    hi:{ name:'"Yaari Anthem" — original Hindi-flavoured tune', caption:"An original desi-style instrumental inspired by classic dosti anthems — a bansuri-ish melody over a warm tabla-like pulse, made just for us.",
-      melody:[493.88,523.25,587.33,659.25,739.99,659.25,587.33,523.25,493.88,587.33,659.25,739.99], bass:[123.47,123.47,146.83,146.83,164.81,164.81,110.00,110.00], tempo:300 }
-  };
-  let currentLang='en', melody=songs.en.melody, bassLine=songs.en.bass;
-  const songNameEl=$('#songName'), songCaptionEl=$('#songCaption'), songLangToggle=$('#songLangToggle');
-  songLangToggle.addEventListener('click', () => {
-    currentLang = currentLang==='en'?'hi':'en'; const s=songs[currentLang]; melody=s.melody; bassLine=s.bass;
-    songNameEl.textContent=s.name; songCaptionEl.textContent=s.caption;
-    songLangToggle.textContent = currentLang==='en' ? '🎶 Switch to Hindi tune' : '🎶 Switch to English tune';
-    if (songPlaying){ stopSong(); startSong(); }
-  });
-  function playNote(freq,type,vol,dur){
-    const ctx=ensureCtx(); const osc=ctx.createOscillator(); const gain=ctx.createGain();
-    osc.type=type; osc.frequency.value=freq;
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime); gain.gain.linearRampToValueAtTime(vol, ctx.currentTime+0.03);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime+dur+0.02);
-  }
-  function playClick(){
-    const ctx=ensureCtx(); const bufferSize=ctx.sampleRate*0.03; const buffer=ctx.createBuffer(1,bufferSize,ctx.sampleRate);
-    const data=buffer.getChannelData(0); for (let i=0;i<bufferSize;i++) data[i]=(Math.random()*2-1)*(1-i/bufferSize);
-    const noise=ctx.createBufferSource(); noise.buffer=buffer; const gain=ctx.createGain(); gain.gain.value=0.06;
-    noise.connect(gain); gain.connect(ctx.destination); noise.start();
-  }
-  function startSong(){
-    songPlaying=true; unlockStamp('dj'); songPlayBtn.textContent='❚❚'; vinylDisc.classList.add('spinning'); step=0;
-    songTimer=setInterval(() => {
-      playNote(melody[step%melody.length],'triangle',0.12,0.4);
-      if (step%2===0){ playNote(bassLine[(step/2)%bassLine.length],'sine',0.09,0.5); playClick(); }
-      step++;
-    }, songs[currentLang].tempo);
-    eqTimer=setInterval(() => eqBars.forEach(b => b.style.height = rand(15,100)+'%'), 160);
-  }
-  function stopSong(){
-    songPlaying=false; songPlayBtn.textContent='▶'; vinylDisc.classList.remove('spinning');
-    clearInterval(songTimer); clearInterval(eqTimer); eqBars.forEach(b => b.style.height='20%');
-  }
-  songPlayBtn.addEventListener('click', () => { songPlaying ? stopSong() : startSong(); });
-
   /* ---------------- PAGE NAVIGATION ---------------- */
   const pages = $$('.page'); const totalPages = pages.length;
   const tabsTrack = $('#stampTabs'); const progressFill = $('#progressFill'); const pageCountEl = $('#pageCount');
-  const pageLabels = ['Cover','Date','Ledger','Map','Song','Funny','Album','Gauge','Game','Letter','Finale'];
+  const pageLabels = ['Cover','Date','Ledger','Map','Scratch','Funny','Fortune','Album','Gauge','Stars','Match','Aura','Letter','Report','Charms','Wish Jar','Finale'];
   pages.forEach((p,i) => {
     const tab = document.createElement('button');
     tab.className = 'stamp-tab' + (i===0?' active':'');
@@ -872,9 +1123,10 @@ document.addEventListener('DOMContentLoaded', () => {
     tabsTrack.appendChild(tab);
   });
   const tabs = $$('.stamp-tab');
-  let currentPage = 0;
+  let currentPage = 0, finaleSeen = false;
   function goToPage(index){
     index = Math.max(0, Math.min(totalPages-1, index));
+    const moved = index !== currentPage;
     currentPage = index;
     pages.forEach(p => p.classList.toggle('active', +p.dataset.page === index));
     tabs.forEach(t => t.classList.toggle('active', +t.dataset.page === index));
@@ -882,13 +1134,20 @@ document.addEventListener('DOMContentLoaded', () => {
     pageCountEl.textContent = String(index+1).padStart(2,'0') + ' / ' + String(totalPages).padStart(2,'0');
     window.scrollTo({ top:0, behavior:'smooth' });
     setTimeout(drawScrapbookLines, 60);
+    setTimeout(initScratchCard, 60);
+    backToCoverBtn?.classList.toggle('show', index > 0);
+    if (moved) confettiRain(5);
+    if (moved && index === totalPages-1 && !finaleSeen){
+      finaleSeen = true;
+      setTimeout(() => { heartRain(10); confettiRain(12); }, 500);
+    }
   }
   $$('.next-btn').forEach(btn => btn.addEventListener('click', () => goToPage(+btn.dataset.next)));
   tabs.forEach(t => t.addEventListener('click', () => goToPage(+t.dataset.page)));
   window.addEventListener('keydown', (e) => { if (e.key==='ArrowRight') goToPage(currentPage+1); if (e.key==='ArrowLeft') goToPage(currentPage-1); });
 
   /* ---------------- TYPING TITLE ---------------- */
-  const typedTitle = $('#typedTitle'); const fullTitle = 'Happy Friendship Day 💙'; let ti=0;
+  const typedTitle = $('#typedTitle'); const fullTitle = 'Happy Friendship Day 💚'; let ti=0;
   function typeTitle(){
     if (ti <= fullTitle.length){ typedTitle.textContent = fullTitle.slice(0,ti); ti++; setTimeout(typeTitle,90); }
     else { typedTitle.classList.add('done'); }
@@ -898,12 +1157,12 @@ document.addEventListener('DOMContentLoaded', () => {
   typedTitle.addEventListener('click', () => {
     titleClicks++; clearTimeout(titleClickTimer); titleClickTimer = setTimeout(() => { titleClicks=0; }, 900);
     if (titleClicks >= 3){
-      titleClicks=0; typedTitle.classList.add('rainbow'); emojiStorm(16,['🎉','💙','✨']); unlockStamp('titletap');
+      titleClicks=0; typedTitle.classList.add('rainbow'); emojiStorm(16,['🎉','💚','✨']); unlockStamp('titletap');
       setTimeout(() => typedTitle.classList.remove('rainbow'), 2500);
     }
   });
 
-  /* ---------------- "secret moon" now: cover flower — 6 taps ---------------- */
+  /* ---------------- "secret" cover flower — 6 taps ---------------- */
   let secretClicks = 0;
   $$('.cover-deco').forEach(el => {
     if (el.textContent.trim() === '🌸'){
@@ -913,7 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (secretClicks >= 6){
           secretClicks = 0; unlockStamp('secret'); heartRain(30);
           const label = document.createElement('div'); label.className='wish-label'; label.style.fontSize='1rem';
-          label.textContent = '🌸 you found the secret — I appreciate you so much 💙';
+          label.textContent = '🌸 you found the secret — I appreciate you so much 💚';
           label.style.left='50%'; label.style.top='16%'; label.style.transform='translateX(-50%)';
           document.body.appendChild(label); setTimeout(() => label.remove(), 2400);
         }
@@ -960,7 +1219,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function tickCounter(){
     countUp = Math.min(totalDays, countUp+countStep); daysCounterEl.textContent = countUp.toLocaleString();
     if (countUp < totalDays) requestAnimationFrame(tickCounter);
-    else { daysCounterEl.textContent = totalDays.toLocaleString(); counterSubEl.textContent = 'and counting, one text at a time 💙'; }
+    else { daysCounterEl.textContent = totalDays.toLocaleString(); counterSubEl.textContent = 'and counting, one text at a time 💚'; }
   }
   new IntersectionObserver((entries,obs) => { entries.forEach(en => { if (en.isIntersecting && countUp===0){ tickCounter(); obs.disconnect(); } }); }, {threshold:0.3}).observe($('#page2'));
   daysCounterEl.addEventListener('click', () => {
@@ -968,7 +1227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scramble = setInterval(() => {
       daysCounterEl.textContent = Math.floor(rand(100,9000)).toLocaleString(); ticks++;
       if (ticks>12){ clearInterval(scramble); daysCounterEl.textContent = totalDays.toLocaleString(); delete daysCounterEl.dataset.scrambling;
-        counterSubEl.textContent = "yep, still " + totalDays.toLocaleString() + " — math doesn't lie 🧮💙"; }
+        counterSubEl.textContent = "yep, still " + totalDays.toLocaleString() + " — math doesn't lie 🧮💚"; }
     }, 60);
   });
 
@@ -978,11 +1237,74 @@ document.addEventListener('DOMContentLoaded', () => {
   planetBoy?.addEventListener('click', () => pinJump(planetBoy,bubbleBoy,'jump-right'));
   planetGirl?.addEventListener('click', () => pinJump(planetGirl,bubbleGirl,'jump-left'));
 
+  /* ---------------- COMPASS ---------------- */
+  const compassWrap=$('#compassWrap'), compassNeedle=$('#compassNeedle'); let compassTurns=0;
+  function spinCompass(){
+    compassTurns += 720 + Math.floor(rand(0,3))*360;
+    compassNeedle.style.transform = `rotate(${compassTurns}deg)`;
+    unlockStamp('compass');
+    const rect = compassWrap.getBoundingClientRect();
+    const label=document.createElement('div'); label.className='wish-label'; label.style.fontSize='0.85rem';
+    label.textContent='🧭 always pointing back to you';
+    label.style.left=(rect.left+rect.width/2-70)+'px'; label.style.top=(rect.top-14)+'px';
+    document.body.appendChild(label); setTimeout(() => label.remove(), 1700);
+  }
+  compassWrap?.addEventListener('click', spinCompass);
+  compassWrap?.addEventListener('keydown', (e) => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); spinCompass(); } });
+
+  /* ---------------- SCRATCH POSTCARD ---------------- */
+  let scratchInited = false, scratchDone = false;
+  function initScratchCard(){
+    const canvas = $('#scratchCanvas'); if (!canvas || scratchInited) return;
+    const wrap = $('#scratchWrap'); const rect = wrap.getBoundingClientRect();
+    if (rect.width === 0) return;
+    scratchInited = true;
+    canvas.width = rect.width; canvas.height = rect.height;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0,0,rect.width,rect.height);
+    grad.addColorStop(0,'#c9b23e'); grad.addColorStop(0.5,'#f0e9a0'); grad.addColorStop(1,'#8a7a1f');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,rect.width,rect.height);
+    ctx.fillStyle = 'rgba(38,50,26,0.55)'; ctx.font = '700 16px Space Mono, monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('✂️ SCRATCH HERE ✂️', rect.width/2, rect.height/2);
+    let scratching = false;
+    const hint = $('#scratchHint');
+    function pos(e){
+      const r = canvas.getBoundingClientRect();
+      const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+      const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+      return { x: cx, y: cy };
+    }
+    function scratchAt(x,y){
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath(); ctx.arc(x,y,26,0,Math.PI*2); ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    function checkProgress(){
+      if (scratchDone) return;
+      const img = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+      let cleared = 0, total = 0;
+      for (let i=3; i<img.length; i+=4*37){ total++; if (img[i] < 40) cleared++; }
+      const pct = Math.round((cleared/total)*100);
+      hint.textContent = 'scratched: ' + Math.min(pct,100) + '%';
+      if (pct > 55){
+        scratchDone = true; unlockStamp('scratcher');
+        canvas.classList.add('revealed');
+        heartRain(8);
+      }
+    }
+    function start(e){ scratching = true; const p = pos(e); scratchAt(p.x,p.y); }
+    function move(e){ if (!scratching) return; e.preventDefault(); const p = pos(e); scratchAt(p.x,p.y); checkProgress(); }
+    function end(){ scratching = false; checkProgress(); }
+    canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, {passive:true}); canvas.addEventListener('touchmove', move, {passive:false}); canvas.addEventListener('touchend', end);
+  }
+  initScratchCard();
+
   /* ---------------- FUNNY ZONE ---------------- */
   const funnyLines = [
     "Roast: You text like you're being charged by the letter. Toast: and I still read every single one twice. 😂",
     "Toast: You're the friend who remembers the tiniest details. Roast: except my birthday reminder, apparently. 💀",
-    "Roast: Your memes game peaked in 2021. Toast: but your loyalty never expired. 💙",
+    "Roast: Your memes game peaked in 2021. Toast: but your loyalty never expired. 💚",
     "Toast: You give the best 3am advice. Roast: mostly because neither of us can sleep, ever.",
     "Roast: You have never once been on time for a call. Toast: but you always show up when it actually matters.",
     "Toast: Certified professional listener. Roast: certified unprofessional at replying to texts.",
@@ -996,6 +1318,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   $('#certDate').textContent = 'Issued on ' + new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   $('#certName').addEventListener('input', (e) => { if (e.target.value.trim().length>1) unlockStamp('cert'); });
+
+  /* ---------------- FORTUNE COOKIE ---------------- */
+  const fortunes = [
+    "A message from far away will make you smile more than you expect today.",
+    "The friend who remembers your weird stories is rarer than you think — keep them close.",
+    "Good things come to those who reply to texts within 24 hours. You're doing great.",
+    "Somewhere, someone is smiling just thinking about the last thing you sent them.",
+    "Distance is just a math problem. Loyalty was never the variable.",
+    "Your inside jokes are load-bearing structures in this friendship. Handle with care.",
+    "This is your sign to send that meme you've been saving for the perfect moment.",
+    "Real friendships don't need daily proof — they run quietly in the background, always on."
+  ];
+  const fortuneCookie=$('#fortuneCookie'), fortuneStrip=$('#fortuneStrip'), fortuneAgainBtn=$('#fortuneAgainBtn');
+  let lastFortune = -1;
+  function crackFortune(){
+    fortuneCookie.classList.remove('cracked'); void fortuneCookie.offsetWidth; fortuneCookie.classList.add('cracked');
+    let pick; do { pick = Math.floor(rand(0,fortunes.length)); } while (pick===lastFortune && fortunes.length>1);
+    lastFortune = pick;
+    fortuneStrip.classList.remove('show');
+    setTimeout(() => { fortuneStrip.textContent = fortunes[pick]; fortuneStrip.classList.add('show'); }, 200);
+    fortuneAgainBtn.style.display = 'inline-flex';
+    unlockStamp('fortune');
+  }
+  fortuneCookie?.addEventListener('click', crackFortune);
+  fortuneAgainBtn?.addEventListener('click', crackFortune);
 
   /* ---------------- SCRAPBOOK ---------------- */
   const galaxy=$('#galaxy'), galaxyLines=$('#galaxyLines');
@@ -1061,45 +1408,132 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------------- GAUGE ---------------- */
   const meterSlider=$('#meterSlider'), meterValue=$('#meterValue'), meterTag=$('#meterTag'); let meterSettled=false;
-  function tagForValue(v){ if (v<20) return 'STRANGERS 🙂'; if (v<45) return 'GETTING TO KNOW EACH OTHER 🌱'; if (v<70) return 'REAL BUDDIES 🤝'; if (v<95) return 'BEST FRIENDS 💙'; return 'SOULMATES, HONESTLY 💫'; }
+  function tagForValue(v){ if (v<20) return 'STRANGERS 🙂'; if (v<45) return 'GETTING TO KNOW EACH OTHER 🌱'; if (v<70) return 'REAL BUDDIES 🤝'; if (v<95) return 'BEST FRIENDS 💚'; return 'SOULMATES, HONESTLY 💫'; }
   meterSlider.addEventListener('input', () => { if (meterSettled) return; meterValue.textContent=meterSlider.value+'%'; meterTag.textContent=tagForValue(+meterSlider.value); });
   meterSlider.addEventListener('change', () => {
     if (meterSettled) return; meterSettled=true; let v=+meterSlider.value;
     const grow=setInterval(() => {
       v=Math.min(100,v+3); meterSlider.value=v; meterValue.textContent=v+'%';
-      meterTag.textContent = v===100 ? 'BEST FRIENDS FOREVER 💙✨' : tagForValue(v);
+      meterTag.textContent = v===100 ? 'BEST FRIENDS FOREVER 💚✨' : tagForValue(v);
       if (v>=100){ clearInterval(grow); heartRain(14); unlockStamp('maxed'); }
     }, 25);
   });
 
-  /* ---------------- MINI GAME ---------------- */
-  const gameStage=$('#gameStage'), gameStartBtn=$('#gameStartBtn'), gameScoreEl=$('#gameScore'), gameTimeEl=$('#gameTime'), gameHintEl=$('#gameHint');
-  const gameEmojis=['💙','💕','✨','🩵']; let gameScore=0, gameActive=false, gameSpawnTimer=null, gameCountdown=null, gameTimeLeft=15;
-  function spawnHeart(){
-    if (!gameActive) return;
-    const el=document.createElement('button'); el.className='game-heart'; el.textContent=gameEmojis[Math.floor(rand(0,gameEmojis.length))]; el.setAttribute('aria-label','Catch this heart');
-    const stageWidth=gameStage.clientWidth; el.style.left=rand(10,stageWidth-40)+'px'; el.style.top='-10px'; el.style.animationDuration=rand(2.2,3.8)+'s';
-    el.addEventListener('click', (e) => {
-      e.stopPropagation(); gameScore++; gameScoreEl.textContent='Score: '+gameScore;
-      const pop=document.createElement('div'); pop.className='game-pop'; pop.textContent='+1'; pop.style.left=el.style.left; pop.style.top=el.style.top;
-      gameStage.appendChild(pop); setTimeout(() => pop.remove(),800); el.remove();
+  /* ---------------- CONSTELLATION ---------------- */
+  const constellationSvg = $('#constellationSvg'), constellationHint = $('#constellationHint');
+  const starPoints = [
+    {x:200, y:40}, {x:120, y:90}, {x:280, y:90}, {x:80, y:170}, {x:320, y:170}, {x:200, y:230}
+  ];
+  let constNext = 0, constDone = false;
+  function buildConstellation(){
+    if (!constellationSvg || constellationSvg.dataset.built) return;
+    constellationSvg.dataset.built = '1';
+    const heartPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+    heartPath.setAttribute('class','const-heart');
+    heartPath.setAttribute('d','M200,210 C120,150 70,100 100,60 C125,30 170,40 200,80 C230,40 275,30 300,60 C330,100 280,150 200,210 Z');
+    constellationSvg.appendChild(heartPath);
+    starPoints.forEach((pt,i) => {
+      const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('class','const-star'); g.dataset.index = i;
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',pt.x); c.setAttribute('cy',pt.y); c.setAttribute('r',13);
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',pt.x); t.setAttribute('y',pt.y+3); t.textContent = i+1;
+      g.appendChild(c); g.appendChild(t);
+      g.addEventListener('click', () => {
+        if (constDone) return;
+        if (i !== constNext){
+          g.animate([{ transform:'translateX(0)' },{ transform:'translateX(-4px)' },{ transform:'translateX(4px)' },{ transform:'translateX(0)' }], { duration:220 });
+          return;
+        }
+        g.classList.add('done');
+        if (constNext > 0){
+          const prev = starPoints[constNext-1];
+          const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+          line.setAttribute('class','const-line');
+          line.setAttribute('x1',prev.x); line.setAttribute('y1',prev.y); line.setAttribute('x2',pt.x); line.setAttribute('y2',pt.y);
+          constellationSvg.insertBefore(line, heartPath.nextSibling);
+        }
+        constNext++;
+        constellationHint.textContent = constNext + ' / 6 stars connected';
+        if (constNext >= starPoints.length){
+          constDone = true;
+          const lastPrev = starPoints[starPoints.length-1], first = starPoints[0];
+          const closing = document.createElementNS('http://www.w3.org/2000/svg','line');
+          closing.setAttribute('class','const-line');
+          closing.setAttribute('x1',lastPrev.x); closing.setAttribute('y1',lastPrev.y); closing.setAttribute('x2',first.x); closing.setAttribute('y2',first.y);
+          constellationSvg.appendChild(closing);
+          setTimeout(() => { heartPath.classList.add('show'); }, 300);
+          unlockStamp('stargazer3'); heartRain(12); confettiRain(10);
+          constellationHint.textContent = 'constellation complete 💚';
+        }
+      });
+      constellationSvg.appendChild(g);
     });
-    el.addEventListener('animationend', () => el.remove());
-    gameStage.appendChild(el); gameSpawnTimer=setTimeout(spawnHeart, rand(450,800));
   }
-  function endGame(){
-    gameActive=false; clearTimeout(gameSpawnTimer); clearInterval(gameCountdown); $$('.game-heart',gameStage).forEach(h => h.remove());
-    gameStartBtn.disabled=false; gameStartBtn.textContent='🎮 Play again'; unlockStamp('gamer');
-    let msg;
-    if (gameScore>=15) msg="Whoa, "+gameScore+" hearts?! You caught them all like a true bestie. 🏆";
-    else if (gameScore>=8) msg="Nice! "+gameScore+" hearts caught — solid friendship reflexes. 💪";
-    else msg="You got "+gameScore+" hearts. It's okay, friendship isn't about reflexes anyway. 😄";
-    gameHintEl.textContent=msg; if (gameScore>=15) heartRain(16);
+  buildConstellation();
+
+  /* ---------------- MEMORY MATCH ---------------- */
+  const matchGrid = $('#matchGrid'), matchHint = $('#matchHint'), matchResetBtn = $('#matchResetBtn');
+  const matchEmojis = ['💚','🎀','🌙','✨','🍃','🧸'];
+  let matchState = { flipped:[], matchedCount:0, lock:false };
+  function shuffleArray(arr){ for (let i=arr.length-1;i>0;i--){ const j=Math.floor(rand(0,i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+  function buildMatchGrid(){
+    matchGrid.innerHTML = ''; matchState = { flipped:[], matchedCount:0, lock:false };
+    matchHint.textContent = '0 / ' + matchEmojis.length + ' pairs found';
+    const deck = shuffleArray([...matchEmojis, ...matchEmojis]);
+    deck.forEach((emoji, idx) => {
+      const card = document.createElement('div'); card.className='match-card'; card.dataset.emoji=emoji; card.dataset.idx=idx;
+      card.innerHTML = `<div class="match-card-inner"><div class="match-face match-front">?</div><div class="match-face match-back">${emoji}</div></div>`;
+      card.addEventListener('click', () => onMatchCardClick(card));
+      matchGrid.appendChild(card);
+    });
   }
-  gameStartBtn.addEventListener('click', () => {
-    if (gameActive) return; gameScore=0; gameTimeLeft=15; gameScoreEl.textContent='Score: 0'; gameTimeEl.textContent='⏱ 15s';
-    gameHintEl.textContent='Go go go — tap every heart you can!'; gameStartBtn.disabled=true; gameStartBtn.textContent='Playing...'; gameActive=true; spawnHeart();
-    gameCountdown=setInterval(() => { gameTimeLeft--; gameTimeEl.textContent='⏱ '+gameTimeLeft+'s'; if (gameTimeLeft<=0) endGame(); }, 1000);
+  function onMatchCardClick(card){
+    if (matchState.lock || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+    card.classList.add('flipped'); matchState.flipped.push(card);
+    if (matchState.flipped.length === 2){
+      matchState.lock = true;
+      const [a,b] = matchState.flipped;
+      if (a.dataset.emoji === b.dataset.emoji){
+        setTimeout(() => {
+          a.classList.add('matched'); b.classList.add('matched');
+          matchState.flipped = []; matchState.lock = false; matchState.matchedCount++;
+          matchHint.textContent = matchState.matchedCount + ' / ' + matchEmojis.length + ' pairs found';
+          if (matchState.matchedCount === matchEmojis.length){
+            unlockStamp('matcher'); heartRain(12); confettiRain(10);
+            matchHint.textContent = 'all pairs found 💚';
+          }
+        }, 350);
+      } else {
+        setTimeout(() => {
+          a.classList.remove('flipped'); b.classList.remove('flipped');
+          matchState.flipped = []; matchState.lock = false;
+        }, 700);
+      }
+    }
+  }
+  buildMatchGrid();
+  matchResetBtn?.addEventListener('click', buildMatchGrid);
+
+  /* ---------------- MOOD RING / AURA ---------------- */
+  const moodRing = $('#moodRing'), moodGem = $('#moodGem'), auraName = $('#auraName'), auraDesc = $('#auraDesc');
+  const auras = [
+    { name:'Sunbeam Gold', grad:'linear-gradient(135deg,#f0e9a0,#c9b23e)', glow:'rgba(240,233,160,0.7)', desc:'Your friendship is glowing bright today — warm, easy, and full of good energy.' },
+    { name:'Harbor Teal', grad:'linear-gradient(135deg,#7fb3a6,#3f7a4a)', glow:'rgba(76,124,147,0.6)', desc:'A calm, steady aura — the kind of friendship that feels like home no matter the distance.' },
+    { name:'Postmark Rose', grad:'linear-gradient(135deg,#e0a08a,#b25a2e)', glow:'rgba(178,90,46,0.6)', desc:'Nostalgic and a little sentimental today. Expect a memory or two to resurface.' },
+    { name:'Meadow Green', grad:'linear-gradient(135deg,#b9cc79,#526138)', glow:'rgba(90,120,60,0.6)', desc:'Growth energy — this friendship keeps getting better with every season.' },
+    { name:'Twilight Plum', grad:'linear-gradient(135deg,#a78bbd,#5b4570)', glow:'rgba(120,90,150,0.6)', desc:'A little mysterious, a little dreamy — the late-night-conversation aura.' },
+    { name:'Brass Comet', grad:'linear-gradient(135deg,#f4d58d,#8a7a1f)', glow:'rgba(201,178,62,0.6)', desc:'Lucky and bright — good things are headed your way, and they involve this friendship.' }
+  ];
+  let lastAura = -1;
+  moodRing?.addEventListener('click', () => {
+    let pick; do { pick = Math.floor(rand(0,auras.length)); } while (pick===lastAura && auras.length>1);
+    lastAura = pick; const a = auras[pick];
+    moodGem.style.background = a.grad; moodGem.style.boxShadow = `0 0 22px 6px ${a.glow}`;
+    auraName.style.opacity='0'; auraDesc.style.opacity='0';
+    setTimeout(() => { auraName.textContent = a.name; auraDesc.textContent = a.desc; auraName.style.opacity='1'; auraDesc.style.opacity='1'; }, 200);
+    unlockStamp('aura');
   });
 
   /* ---------------- SEALED LETTER ---------------- */
@@ -1123,6 +1557,77 @@ document.addEventListener('DOMContentLoaded', () => {
   psNoteEl.textContent = "P.S. — yes I hid this here on purpose. Consider it proof I put actual thought into this. 😌";
   letterSignatureEl.addEventListener('click', () => { psNoteEl.classList.toggle('show'); if (psNoteEl.classList.contains('show')) unlockStamp('psfinder'); });
 
+  /* ---------------- FIELD REPORT ---------------- */
+  const weatherIcon=$('#weatherIcon'), weatherTemp=$('#weatherTemp'), weatherDesc=$('#weatherDesc'), weatherBtn=$('#weatherBtn');
+  const forecasts = [
+    { icon:'☀️', temp:'100% Warm', desc:'Chance of friendship: 100%. Skies clear of drama, high chance of inside jokes after 3pm.' },
+    { icon:'🌦️', temp:'70% Nostalgic', desc:'Scattered flashbacks expected, mostly of that one memory we still bring up too much.' },
+    { icon:'🌈', temp:'Rainbow watch', desc:'A rare full-spectrum day — sunny mornings, a little rain, and a rainbow of memes by evening.' },
+    { icon:'⛅', temp:'Mild & steady', desc:'Partly cloudy, with a strong and steady front of loyalty moving in from your direction.' },
+    { icon:'🌙', temp:'Clear night ahead', desc:'Perfect visibility for late-night calls and questionable decisions, made together as usual.' },
+    { icon:'🍃', temp:'Gentle breeze', desc:'A calm, easy day — the kind where you don\u2019t say much and it still feels like enough.' }
+  ];
+  let lastForecast=0;
+  weatherBtn?.addEventListener('click', () => {
+    let pick; do { pick = Math.floor(rand(0,forecasts.length)); } while (pick===lastForecast && forecasts.length>1);
+    lastForecast = pick; const f = forecasts[pick];
+    weatherIcon.style.animation='none'; void weatherIcon.offsetWidth; weatherIcon.style.animation='';
+    weatherIcon.textContent=f.icon; weatherTemp.textContent=f.temp; weatherDesc.textContent=f.desc;
+    unlockStamp('forecast');
+  });
+
+  /* ---------------- CHARM BRACELET ---------------- */
+  const braceletString=$('#braceletString'), braceletPlaceholder=$('#braceletPlaceholder'), charmTray=$('#charmTray'), braceletClearBtn=$('#braceletClearBtn');
+  const charmOptions = ['💚','🌙','⭐','🎀','🌸','🧸','🍀','☕'];
+  let braceletCount = 0;
+  charmOptions.forEach(ch => {
+    const b = document.createElement('button'); b.className='charm-btn'; b.textContent=ch; b.setAttribute('aria-label','Add '+ch+' charm');
+    b.addEventListener('click', () => {
+      if (braceletCount === 0 && braceletPlaceholder) braceletPlaceholder.remove();
+      if (braceletCount >= 14) return;
+      const charm = document.createElement('span'); charm.className='bracelet-charm'; charm.textContent = ch;
+      charm.style.animationDelay = rand(0,1)+'s';
+      braceletString.appendChild(charm); braceletCount++;
+      unlockStamp('charm');
+    });
+    charmTray.appendChild(b);
+  });
+  braceletClearBtn?.addEventListener('click', () => {
+    braceletString.innerHTML = '<span class="bracelet-placeholder" id="braceletPlaceholder">— empty string, tap a charm below —</span>';
+    braceletCount = 0;
+  });
+
+  /* ---------------- WISH JAR ---------------- */
+  const wishInput=$('#wishInput'), wishDropBtn=$('#wishDropBtn'), jarFill=$('#jarFill'), wishCountEl=$('#wishCount');
+  let wishTotal = 0;
+  const jarNoteEmojis = ['💌','💚','✨','🎀'];
+  wishDropBtn?.addEventListener('click', () => {
+    const text = wishInput.value.trim();
+    const startRect = wishDropBtn.getBoundingClientRect();
+    const jarRect = jarFill.getBoundingClientRect();
+    const note = document.createElement('div');
+    note.className = 'falling-note';
+    note.textContent = jarNoteEmojis[Math.floor(rand(0,jarNoteEmojis.length))] + ' ' + (text || 'a quiet wish');
+    note.style.left = (startRect.left + startRect.width/2 - 40) + 'px';
+    note.style.top = startRect.top + 'px';
+    document.body.appendChild(note);
+    note.animate([
+      { transform:'translate(0,0) scale(1)', opacity:1 },
+      { transform:`translate(${jarRect.left - startRect.left}px, ${jarRect.top - startRect.top}px) scale(0.4)`, opacity:0.2 }
+    ], { duration:700, easing:'cubic-bezier(.3,.6,.3,1)' });
+    setTimeout(() => note.remove(), 720);
+    setTimeout(() => {
+      wishTotal++;
+      const pct = Math.min(90, wishTotal*12);
+      jarFill.style.height = pct + '%';
+      const chip = document.createElement('span'); chip.className='jar-note'; chip.textContent = jarNoteEmojis[Math.floor(rand(0,jarNoteEmojis.length))];
+      jarFill.appendChild(chip);
+      wishCountEl.textContent = wishTotal + (wishTotal===1 ? ' wish dropped' : ' wishes dropped');
+      unlockStamp('wisher2');
+    }, 650);
+    wishInput.value = '';
+  });
+
   /* ---------------- FIREWORKS + FINALE ---------------- */
   const fwCanvas=$('#fireworks'), fctx=fwCanvas.getContext('2d'); let fparticles=[];
   function resizeFw(){ fwCanvas.width=window.innerWidth; fwCanvas.height=window.innerHeight; }
@@ -1134,24 +1639,97 @@ document.addEventListener('DOMContentLoaded', () => {
     fparticles = fparticles.filter(p => p.life>0); requestAnimationFrame(animateFw);
   }
   animateFw();
-  const colorSets = [ ['rgba(155,74,56,ALPHA)','rgba(201,169,105,ALPHA)','rgba(76,124,147,ALPHA)'], ['rgba(239,223,176,ALPHA)','rgba(216,197,153,ALPHA)','rgba(90,83,70,ALPHA)'] ];
+  const colorSets = [ ['rgba(163,81,46,ALPHA)','rgba(199,169,78,ALPHA)','rgba(95,122,82,ALPHA)'], ['rgba(238,224,171,ALPHA)','rgba(201,187,135,ALPHA)','rgba(92,90,63,ALPHA)'] ];
   const surpriseBtn=$('#surpriseBtn');
   surpriseBtn.addEventListener('click', () => {
-    surpriseBtn.disabled=true; surpriseBtn.textContent='💙 ✨ 💙'; let bursts=0;
+    surpriseBtn.disabled=true; surpriseBtn.textContent='💚 ✨ 💚'; let bursts=0;
     const fireworksInterval = setInterval(() => {
       burst(rand(0,fwCanvas.width), rand(40, fwCanvas.height*0.55+40), colorSets[bursts % colorSets.length]); bursts++;
-      if (bursts>14){ clearInterval(fireworksInterval); surpriseBtn.textContent='Happy Friendship Day 💙'; unlockStamp('finisher'); }
+      if (bursts>14){ clearInterval(fireworksInterval); surpriseBtn.textContent='Happy Friendship Day 💚'; unlockStamp('finisher'); }
     }, 260);
     heartRain(24); confettiRain(20);
   });
   const hugBtn=$('#hugBtn');
   hugBtn.addEventListener('click', () => {
     hugBtn.disabled=true; hugBtn.textContent='Hug sent 🤍';
-    const label=document.createElement('div'); label.className='wish-label'; label.style.fontSize='1.2rem'; label.textContent='🤗💙';
+    const label=document.createElement('div'); label.className='wish-label'; label.style.fontSize='1.2rem'; label.textContent='🤗💚';
     label.style.left=(window.innerWidth/2-20)+'px'; label.style.top=(window.innerHeight/2)+'px'; document.body.appendChild(label);
     setTimeout(() => label.remove(), 1700); heartRain(10);
     setTimeout(() => { hugBtn.disabled=false; hugBtn.textContent='🤗 Send a hug'; }, 3000);
   });
+
+  /* ---------------- QUOTE ROTATOR (Map page) ---------------- */
+  const rotatingQuoteEl = $('#rotatingQuote');
+  const mapQuotes = [
+    "No matter where life takes us, you'll always be my favorite person to laugh with.",
+    "Miles apart, minutes away — that's what a good friendship feels like.",
+    "Home isn't a place when you have a friend like this. It's a feeling.",
+    "Some friendships are built on proximity. Ours was built on choosing each other, every time.",
+    "Every time zone in between us has never once gotten in the way."
+  ];
+  let quoteIdx = 0;
+  if (rotatingQuoteEl){
+    setInterval(() => {
+      rotatingQuoteEl.classList.add('fade');
+      setTimeout(() => {
+        quoteIdx = (quoteIdx+1) % mapQuotes.length;
+        rotatingQuoteEl.textContent = mapQuotes[quoteIdx];
+        rotatingQuoteEl.classList.remove('fade');
+      }, 450);
+    }, 5200);
+  }
+
+  /* ---------------- WHY YOU'RE SPECIAL (flip cards) ---------------- */
+  const specialGrid = $('#specialGrid');
+  const specialReasons = [
+    { icon:'👂', label:'Listener', text:"You actually listen — not just wait for your turn to talk." },
+    { icon:'😂', label:'Laughter', text:"You make ordinary days feel like inside jokes waiting to happen." },
+    { icon:'🛟', label:'Steady', text:"No matter what's going on, you're the calm I can always reach." },
+    { icon:'🌱', label:'Growth', text:"You've watched me change and never once made me feel behind." },
+    { icon:'🔑', label:'Trust', text:"You're one of the very few people I never have to explain myself to." },
+    { icon:'🎯', label:'Honest', text:"You tell me the truth, even when it's easier not to." }
+  ];
+  let specialFlippedCount = 0, specialAllUnlocked = false;
+  if (specialGrid){
+    specialReasons.forEach((r) => {
+      const card = document.createElement('div'); card.className = 'special-card';
+      card.innerHTML = `
+        <div class="special-card-inner">
+          <div class="special-face special-front"><span class="icon">${r.icon}</span><span class="label">${r.label}</span></div>
+          <div class="special-face special-back">${r.text}</div>
+        </div>`;
+      card.addEventListener('click', () => {
+        const wasFlipped = card.classList.contains('flipped');
+        card.classList.toggle('flipped');
+        if (!wasFlipped){
+          specialFlippedCount++;
+          if (specialFlippedCount >= specialReasons.length && !specialAllUnlocked){
+            specialAllUnlocked = true; unlockStamp('special'); heartRain(10);
+          }
+        }
+      });
+      specialGrid.appendChild(card);
+    });
+  }
+
+  /* ---------------- FINALE REACTIONS ---------------- */
+  const reactionBar = $('#reactionBar');
+  const reactionDefs = [ {emoji:'💚',label:'Love it'}, {emoji:'😍',label:'Adore it'}, {emoji:'🥹',label:'Made me tear up'}, {emoji:'🎉',label:'So fun'} ];
+  if (reactionBar){
+    reactionDefs.forEach(r => {
+      const btn = document.createElement('button'); btn.className='reaction-btn'; btn.type='button';
+      btn.setAttribute('aria-label', r.label); btn.dataset.count = '0';
+      btn.innerHTML = `<span>${r.emoji}</span><span class="count">0</span>`;
+      btn.addEventListener('click', () => {
+        const next = (+btn.dataset.count)+1; btn.dataset.count = String(next);
+        $('.count', btn).textContent = next;
+        btn.classList.remove('popped'); void btn.offsetWidth; btn.classList.add('popped');
+        spawnParticle({ text:r.emoji, size:20, left: rand(30,70)+'vw', duration: rand(2.5,4) });
+        unlockStamp('reacted');
+      });
+      reactionBar.appendChild(btn);
+    });
+  }
 
   goToPage(0);
 });
